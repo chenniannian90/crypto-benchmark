@@ -59,7 +59,7 @@ func TestEncAndDec_CCS(t *testing.T) {
 
 
 
-func BenchmarkHash_CSS(b *testing.B){
+func BenchmarkHash_CCS(b *testing.B){
 	origin := []byte(TestHashString)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
