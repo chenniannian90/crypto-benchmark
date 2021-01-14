@@ -4,54 +4,71 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
+	"crypto/sha256"
+	"fmt"
+	"github.com/hyperledger/fabric/bccsp"
+	"github.com/hyperledger/fabric/bccsp/utils"
 	"testing"
 )
+
+func signECDSA(k *ecdsa.PrivateKey, digest []byte, opts bccsp.SignerOpts) ([]byte, error) {
+	r, s, err := ecdsa.Sign(rand.Reader, k, digest)
+	if err != nil {
+		return nil, err
+	}
+
+	s, err = utils.ToLowS(&k.PublicKey, s)
+	if err != nil {
+		return nil, err
+	}
+
+	return utils.MarshalECDSASignature(r, s)
+}
+
+func verifyECDSA(k *ecdsa.PublicKey, signature, digest []byte, opts bccsp.SignerOpts) (bool, error) {
+	r, s, err := utils.UnmarshalECDSASignature(signature)
+	if err != nil {
+		return false, fmt.Errorf("Failed unmashalling signature [%s]", err)
+	}
+
+	lowS, err := utils.IsLowS(k, s)
+	if err != nil {
+		return false, err
+	}
+
+	if !lowS {
+		return false, fmt.Errorf("Invalid S. Must be smaller than half the order [%s][%s].", s, utils.GetCurveHalfOrdersAt(k.Curve))
+	}
+
+	return ecdsa.Verify(k, digest, r, s), nil
+}
+
 
 // fabric 默认的签名/验签 性能测试
 func BenchmarkSign_FABRIC(b *testing.B) {
 	hashed := []byte("testing")
 	priv, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	for i := 0; i < b.N; i++ {
-		_, _, _ = ecdsa.Sign(rand.Reader, priv, hashed)
+		 _, _ = signECDSA(priv, hashed, nil)
 	}
 }
 
 func BenchmarkVerify_FABRIC(b *testing.B) {
-	//priv, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-	//origin := []byte("testing")
-	//hash := sm3.New()
-	//hash.Write(origin)
-	//hashed := hash.Sum(nil)
-	//
-	//sig,_ := priv.Sign(rand.Reader,hashed, nil)
-	//b.ResetTimer()
-	//for i := 0; i < b.N; i++ {
-	//	(&priv.PublicKey)..Verify(hashed,sig)
-	//}
+	priv, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	origin := []byte("testing")
+
+	hash := sha256.New()
+	hash.Write(origin)
+	hashed := hash.Sum(nil)
+
+	sig,_ := priv.Sign(rand.Reader,hashed, nil)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, _ = verifyECDSA(&priv.PublicKey, sig, hashed, nil)
+	}
 }
 
+// go 标准库没有椭圆曲线加/解密
 func TestEncAndDec_FABRIC(t *testing.T) {
-	//msg := []byte("sm2 encryption standard")
-	//
-	//sk, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-	//pk := &sk.PublicKey
-	//
-	////test encryption
-	//cipher, err := ecdsa.Encrypt(pk, msg, rand.Reader)
-	//if err != nil {
-	//	t.Errorf("enc err:%s", err)
-	//	return
-	//}
-	//
-	////test decryption
-	//plain, err := sm2.Decrypt(sk, cipher)
-	//if err != nil {
-	//	t.Errorf("dec err:%s", err)
-	//	return
-	//}
-	//
-	//if !bytes.Equal(msg, plain) {
-	//	t.Error("sm2 encryption is invalid")
-	//	return
-	//}
+
 }
