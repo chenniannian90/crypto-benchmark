@@ -1,6 +1,10 @@
 # crypto-benchmark
 用于测试各加密库签名/验签性能
 
+### 依赖 
+北大国密库需要必要的头文件
+安装GmSSL 参考 http://gmssl.org/docs/install.html
+
 ```shell script
 go test -bench . -run=none 
 
