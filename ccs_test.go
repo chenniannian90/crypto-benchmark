@@ -56,3 +56,15 @@ func TestEncAndDec_CCS(t *testing.T) {
 		return
 	}
 }
+
+const TestHashString = "testingtestingtestingtestingtestingtestingtestingtestingtestingtestingtestingtestingtesting"
+
+func BenchmarkHash_CSS(b *testing.B){
+	origin := []byte(TestHashString)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		hash := sm3.New()
+		hash.Write(origin)
+		_ = hash.Sum(nil)
+	}
+}
