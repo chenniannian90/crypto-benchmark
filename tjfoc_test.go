@@ -10,7 +10,7 @@ import (
 
 // 同济gm库 性能测试
 func BenchmarkSign_TJ(b *testing.B) {
-	hashed := []byte("testing")
+	hashed := []byte(TestHashString)
 	priv, _ := sm2.GenerateKey(rand.Reader)
 	for i := 0; i < b.N; i++ {
 		_, _ = priv.Sign(rand.Reader, hashed, nil)
@@ -19,7 +19,7 @@ func BenchmarkSign_TJ(b *testing.B) {
 
 func BenchmarkVerify_TJ(b *testing.B) {
 	priv, _ := sm2.GenerateKey(rand.Reader)
-	origin := []byte("testing")
+	origin := []byte(TestHashString)
 	hash := sm3.New()
 	hash.Write(origin)
 	hashed := hash.Sum(nil)
@@ -32,7 +32,7 @@ func BenchmarkVerify_TJ(b *testing.B) {
 }
 
 func TestEncAndDec_TJ(t *testing.T) {
-	msg := []byte("sm2 encryption standard")
+	msg := []byte(TestHashString)
 
 	sk, _ := sm2.GenerateKey(rand.Reader)
 	pk := &sk.PublicKey

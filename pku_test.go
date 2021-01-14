@@ -7,7 +7,7 @@ import (
 
 // 北大gm库 性能测试
 func BenchmarkSign_PKU(b *testing.B) {
-	hashed := []byte("testing")
+	hashed := []byte(TestHashString)
 	sm2keygenargs := [][2]string{
 		{"ec_paramgen_curve", "sm2p256v1"},
 		{"ec_param_enc", "named_curve"},
@@ -18,7 +18,7 @@ func BenchmarkSign_PKU(b *testing.B) {
 	}
 }
 
-// bug 太多跑不同
+// bug太多 跑不同
 //func BenchmarkVerify_PKU(b *testing.B) {
 //	hashed := []byte("testing")
 //	sm2keygenargs := [][2]string{

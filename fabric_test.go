@@ -46,7 +46,7 @@ func verifyECDSA(k *ecdsa.PublicKey, signature, digest []byte, opts bccsp.Signer
 
 // fabric 默认的签名/验签 性能测试
 func BenchmarkSign_FABRIC(b *testing.B) {
-	hashed := []byte("testing")
+	hashed := []byte(TestHashString)
 	priv, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	for i := 0; i < b.N; i++ {
 		 _, _ = signECDSA(priv, hashed, nil)
@@ -55,7 +55,7 @@ func BenchmarkSign_FABRIC(b *testing.B) {
 
 func BenchmarkVerify_FABRIC(b *testing.B) {
 	priv, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-	origin := []byte("testing")
+	origin := []byte(TestHashString)
 
 	hash := sha256.New()
 	hash.Write(origin)

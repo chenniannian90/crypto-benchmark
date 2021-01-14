@@ -10,7 +10,7 @@ import (
 
 // 国家网安 性能测试
 func BenchmarkSign_CCS(b *testing.B) {
-	hashed := []byte("testing")
+	hashed := []byte(TestHashString)
 	priv, _ := sm2.GenerateKey(rand.Reader)
 	for i := 0; i < b.N; i++ {
 		_, _, _ = sm2.Sign(rand.Reader, priv, hashed)
@@ -19,7 +19,7 @@ func BenchmarkSign_CCS(b *testing.B) {
 
 func BenchmarkVerify_CCS(b *testing.B) {
 	priv, _ := sm2.GenerateKey(rand.Reader)
-	origin := []byte("testing")
+	origin := []byte(TestHashString)
 	hash := sm3.New()
 	hash.Write(origin)
 	hashed := hash.Sum(nil)
@@ -32,7 +32,7 @@ func BenchmarkVerify_CCS(b *testing.B) {
 }
 
 func TestEncAndDec_CCS(t *testing.T) {
-	msg := []byte("sm2 encryption standard")
+	msg := []byte(TestHashString)
 
 	sk, _ := sm2.GenerateKey(rand.Reader)
 	pk := sk.PublicKey
@@ -57,7 +57,7 @@ func TestEncAndDec_CCS(t *testing.T) {
 	}
 }
 
-const TestHashString = "testingtestingtestingtestingtestingtestingtestingtestingtestingtestingtestingtestingtesting"
+
 
 func BenchmarkHash_CSS(b *testing.B){
 	origin := []byte(TestHashString)
