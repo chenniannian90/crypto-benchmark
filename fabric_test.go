@@ -17,10 +17,10 @@ func signECDSA(k *ecdsa.PrivateKey, digest []byte, opts bccsp.SignerOpts) ([]byt
 		return nil, err
 	}
 
-	s, err = utils.ToLowS(&k.PublicKey, s)
-	if err != nil {
-		return nil, err
-	}
+	//s, err = utils.ToLowS(&k.PublicKey, s)
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	return utils.MarshalECDSASignature(r, s)
 }
@@ -31,14 +31,14 @@ func verifyECDSA(k *ecdsa.PublicKey, signature, digest []byte, opts bccsp.Signer
 		return false, fmt.Errorf("Failed unmashalling signature [%s]", err)
 	}
 
-	lowS, err := utils.IsLowS(k, s)
-	if err != nil {
-		return false, err
-	}
-
-	if !lowS {
-		return false, fmt.Errorf("Invalid S. Must be smaller than half the order [%s][%s].", s, utils.GetCurveHalfOrdersAt(k.Curve))
-	}
+	//lowS, err := utils.IsLowS(k, s)
+	//if err != nil {
+	//	return false, err
+	//}
+	//
+	//if !lowS {
+	//	return false, fmt.Errorf("Invalid S. Must be smaller than half the order [%s][%s].", s, utils.GetCurveHalfOrdersAt(k.Curve))
+	//}
 
 	return ecdsa.Verify(k, digest, r, s), nil
 }
