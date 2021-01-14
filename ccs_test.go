@@ -58,7 +58,6 @@ func TestEncAndDec_CCS(t *testing.T) {
 }
 
 
-
 func BenchmarkHash_CCS(b *testing.B){
 	origin := []byte(TestHashString)
 	b.ResetTimer()

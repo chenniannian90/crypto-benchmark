@@ -77,8 +77,6 @@ func BenchmarkHash_Fabric(b *testing.B){
 	origin := []byte(TestHashString)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		hash := sha256.New()
-		hash.Write(origin)
-		_ = hash.Sum(nil)
+		_ = sha256.Sum256(origin)
 	}
 }
